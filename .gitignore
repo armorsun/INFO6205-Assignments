@@ -31,6 +31,9 @@ bin/*
 .project
 .settings
 
+# System files
+.DS_Store
+
 # Only for the public repository
 #"Quizzes and Exams"/
 #/Quizzes and Exams/
