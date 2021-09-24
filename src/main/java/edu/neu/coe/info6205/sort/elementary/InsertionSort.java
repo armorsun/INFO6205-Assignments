@@ -59,6 +59,15 @@ public class InsertionSort<X extends Comparable<X>> extends SortWithHelper<X> {
         final Helper<X> helper = getHelper();
 
         // TO BE IMPLEMENTED
+        int target = from + 1; // target will move toward the end of the array
+        while (target < to) {
+            // The for loop will swap the target from the index of itself to the start of the array until sorted
+            for (int i = target; i > from; i--) {
+                boolean swapped = helper.swapConditional(xs, i - 1, i);
+                if (!swapped) break;
+            }
+            target += 1;
+        }
     }
 
     public static final String DESCRIPTION = "Insertion sort";
