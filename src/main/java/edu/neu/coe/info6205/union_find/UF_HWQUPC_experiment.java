@@ -6,25 +6,32 @@ public class UF_HWQUPC_experiment {
 
     public static void main(String[] args) {
         boolean pathCompression = true;
-        int[] numberOfSites = {100, 200, 400, 800, 1600, 3200, 6400, 12800, 25600};
+        int[] numberOfSites = {10000, 20000, 40000, 80000, 160000, 320000, 640000, 1280000, 2560000};
         int times = 10;
 
         for (int i = 0; i < numberOfSites.length; i++) {
+            int generated = 0;
             int connections = 0;
 
             // Do this multiple times and get average
             for (int j = 0; j < times; j++) {
                 UF_HWQUPC union = new UF_HWQUPC(numberOfSites[i], pathCompression);
-                connections += count(union);
+                int[] count = count(union);
+                connections += count[0];
+                generated += count[1];
+
             }
-            System.out.println("Average " + connections / times + " connections of " + numberOfSites[i] + " sites");
+            System.out.println("Average " + generated / times + " paris generated with " + connections / times + " connections of " + numberOfSites[i] + " sites");
         }
     }
 
-    private static int count(UF_HWQUPC union) {
+    private static int[] count(UF_HWQUPC union) {
         int connections = 0;
+        int generated = 0;
         while (union.components() != 1) {
             int[] randomPair = getRandomPair(union.size());
+            generated++;
+
             if (!union.connected(randomPair[0], randomPair[1])) {
                 union.connect(randomPair[0], randomPair[1]);
 
@@ -33,7 +40,7 @@ public class UF_HWQUPC_experiment {
             }
         }
 
-        return connections;
+        return new int[]{connections, generated};
     }
 
     private static int[] getRandomPair(int max) {
