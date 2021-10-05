@@ -11,6 +11,8 @@ public class UF_HWQUPC_experiment {
 
         for (int i = 0; i < numberOfSites.length; i++) {
             int connections = 0;
+
+            // Do this multiple times and get average
             for (int j = 0; j < times; j++) {
                 UF_HWQUPC union = new UF_HWQUPC(numberOfSites[i], pathCompression);
                 connections += count(union);
@@ -25,9 +27,10 @@ public class UF_HWQUPC_experiment {
             int[] randomPair = getRandomPair(union.size());
             if (!union.connected(randomPair[0], randomPair[1])) {
                 union.connect(randomPair[0], randomPair[1]);
+
+                // Only count the connections built
                 connections++;
             }
-
         }
 
         return connections;
