@@ -18,35 +18,55 @@ public class Main {
 
     public static void main(String[] args) {
         processArgs(args);
-        System.out.println("Degree of parallelism: " + ForkJoinPool.getCommonPoolParallelism());
+
         Random random = new Random();
-        int[] array = new int[2000000];
+        final int parallelism = 1;
+
+        final int arraySize = 4000000;
+        final int repeatedTimes = 10;
+
+        final int cutoffBase = 1;
+        final int cutoffWeight = 1000;
+        final int cutoffInterval = 1;
+        final int cutoffLimit = 40;
+        int[] array = new int[arraySize];
+
         ArrayList<Long> timeList = new ArrayList<>();
-        for (int j = 50; j < 100; j++) {
-            ParSort.cutoff = 10000 * (j + 1);
-            // for (int i = 0; i < array.length; i++) array[i] = random.nextInt(10000000);
-            long time;
+
+        ParSort.parallelism = parallelism;
+
+        for (int k = cutoffBase; k <= cutoffLimit; k += cutoffInterval) {
+            ParSort.cutoff = cutoffWeight * k;
+
             long startTime = System.currentTimeMillis();
-            for (int t = 0; t < 10; t++) {
-                for (int i = 0; i < array.length; i++) array[i] = random.nextInt(10000000);
+
+            for (int expTime = 0; expTime < repeatedTimes; expTime++) {
+                for (int i = 0; i < array.length; i++) array[i] = random.nextInt(arraySize * repeatedTimes);
                 ParSort.sort(array, 0, array.length);
             }
+
             long endTime = System.currentTimeMillis();
-            time = (endTime - startTime);
+
+            long time = (endTime - startTime);
             timeList.add(time);
 
-
-            System.out.println("cutoff：" + (ParSort.cutoff) + "\t\t10times Time:" + time + "ms");
+            System.out.println("cutoff：" + (ParSort.cutoff) + "\t\t10 times Time:" + time + "ms");
 
         }
+
         try {
-            FileOutputStream fis = new FileOutputStream("./src/result.csv");
+            FileOutputStream fis = new FileOutputStream("./assignment_5/data/arr-" + arraySize +
+                    "_cutoffStart-" + cutoffWeight * cutoffBase +
+                    "_cutoffEnd-" + cutoffLimit +
+                    "_cutoffInterval-" + cutoffInterval * cutoffWeight +
+                    "_parallelism-" + parallelism + "_result.csv");
+
             OutputStreamWriter isr = new OutputStreamWriter(fis);
             BufferedWriter bw = new BufferedWriter(isr);
-            int j = 0;
+            int j = cutoffBase;
             for (long i : timeList) {
-                String content = (double) 10000 * (j + 1) / 2000000 + "," + (double) i / 10 + "\n";
-                j++;
+                String content = (double) cutoffWeight * j / arraySize + "," + (double) i / 10 + "\n";
+                j += cutoffInterval;
                 bw.write(content);
                 bw.flush();
             }
